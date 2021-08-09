@@ -5,12 +5,13 @@ import { Button, Container, FormControlLabel, Switch, TextField, Typography } fr
 
 import { useState } from 'react';
 
-const FormCadastro = () => {
+const FormCadastro = ({onSubmit, validarCPF}) => {
     const [nome, setNome] = useState("");
     const [sobrenome, setSobrenome] = useState("");
     const [cpf, setCpf] = useState("");
     const [promocoes, setPromocoes] = useState(true);
     const [novidades, setNovidades] = useState(true);
+    const [erros, setErros] = useState({cpf: {valido: false, texto: ""}});
 
     const validarNomeHandler = (event) => {
         let tmpNome = event.target.value;
@@ -27,6 +28,10 @@ const FormCadastro = () => {
     const validarCpfHandler = (event) => {
         setCpf(event.target.value)
     }
+    const validarDigitoCpf = (event) => {
+        const ehValido = validarCPF(cpf)
+        setErros({cpf: ehValido});
+    }
     const validarPromocoesHandler = (event) => {
         setPromocoes(event.target.checked)
     }
@@ -36,7 +41,7 @@ const FormCadastro = () => {
 
     const enviarFormularioHandler = (event) => {
         event.preventDefault();
-        console.log({nome, sobrenome, cpf, promocoes, novidades});
+        onSubmit({nome, sobrenome, cpf, promocoes, novidades});
     }
 
     return (
@@ -63,7 +68,10 @@ const FormCadastro = () => {
                     margin="normal" />
                 <TextField
                     value={cpf}
+                    error={!erros.cpf.valido}
+                    helperText={erros.cpf.texto}
                     onChange={validarCpfHandler}
+                    onBlur={validarDigitoCpf}
                     id="cpf"
                     label="CPF"
                     variant="outlined"
